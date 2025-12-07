@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Password Generator</title>
+</head>
+
+<body>
+
+	<h1>Password Generator</h1>
+
+	<label>Quantity (1-10):</label>
+	<input type="number" id="qty" value="10" min="1" max="10" size="20">
+	<br>
+
+	<label>Length (1-50):</label>
+	<input type="number" id="len" value="15" min="1" max="50" size="20">
+	<br>
+
+	<label>Alphabet:</label>
+	<select id="alphabet">
+		<option value="1">Letters only</option>
+		<option value="2">Letters + Numbers</option>
+		<option value="3" selected>Letters + Numbers + Punctuation</option>
+	</select>
+	<br><br>
+
+	<button onclick="getPasswords()">Generate Passwords</button>
+
+	<br><br>
+	<div id="results"></div>
+
+	<script>
+		async function getPasswords() {
+			const quantity = document.getElementById('qty').value;
+			const length = document.getElementById('len').value;
+			const alphabet = document.getElementById('alphabet').value;
+
+			if (quantity < 1 || quantity > 10) {
+				alert('Quantity out of permited limit!');
+				return;
+			}
+
+			if (length < 1 || length > 50) {
+				alert('Length out of permited limit!');
+				return;
+			}
+
+			if (alphabet < 1 || alphabet > 3) {
+				alert('Invalid alphabet!');
+				return;
+			}
+
+			const response = await fetch(`http://127.0.0.1:5000/generate?quantity=${quantity}&length=${length}&alphabet=${alphabet}`);
+			const data = await response.json();
+
+			console.log(response);
+			console.log(data);
+
+			const resultsDiv = document.getElementById('results');
+			resultsDiv.innerHTML = ""; // Clear content
+
+			data.passwords.forEach(pwd => {
+				const passwordItem = document.createElement('div');
+				passwordItem.textContent = pwd;
+				resultsDiv.appendChild(passwordItem);
+			});
+		}
+	</script>
+
+</body>
+
+</html>
